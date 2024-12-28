@@ -1,3 +1,6 @@
 *ipynb_checkpoints*
 modelenv
-*/data
+notebooks/*/data
+*.DS_store
+.vscode
+*.pyc
