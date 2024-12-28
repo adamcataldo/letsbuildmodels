@@ -2,3 +2,5 @@
 modelenv
 notebooks/*/data
 *.DS_store
+.vscode
+*.pyc

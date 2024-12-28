@@ -3,29 +3,51 @@ import sys
 
 import torch
 
-def try_free(obj, device):
-    """Try to free object memory from a device.
+def get_device():
+    """
+    Determine the optimal device for computation based on availability.
 
-    This method only works if the object has only a single reference, defined in
-    the namespace of the calling method. It is designed for interactive use 
-    cases, like jupyter notebooks, where a user may wish to experiment with
-    multiple models and wish to free memory on a GPU from a previous model
-    before creating the next model.
+    This function checks the availability of hardware acceleration devices 
+    in the following order of preference:
+    1. CUDA (NVIDIA GPUs)
+    2. MPS (Metal Performance Shaders on Apple devices)
+    3. CPU (fallback if no GPU is available)
+
+    Returns:
+        str: A string representing the device to be used for computation.
+             Possible values are:
+             - 'cuda': Indicates that an NVIDIA GPU is available.
+             - 'mps': Indicates that Metal Performance Shaders are available on
+                      macOS.
+             - 'cpu': Indicates that neither CUDA nor MPS is available,
+                      defaulting to CPU.
+    """    
+    return(
+        "cuda"
+        if torch.cuda.is_available()
+        else "mps"
+        if torch.backends.mps.is_available()
+        else "cpu"
+    )
+
+def empty_device(device):
+    """
+    Clear the memory cache of a specified device.
+
+    This function frees up memory on the specified device by clearing its cache.
+    It supports CUDA (NVIDIA GPUs) and MPS (Metal Performance Shaders on Apple 
+    devices).
 
     Parameters:
-        obj - A (string) variable name to be deleted.
-        device - A string, like 'cuda' or 'mps', representing the device to free
-                 memory from.
+        device (str): The device whose cache should be cleared.
+                      Supported values are:
+                      - 'cuda': Clears the CUDA cache for NVIDIA GPUs.
+                      - 'mps': Clears the MPS cache for macOS devices.
 
-    Retruns:
-        True if the object was freed from the device, False otherwise.
+    Returns:
+        None
     """
-    p_frame = inspect.currentframe().f_back
-    if obj in p_frame.f_locals and sys.getrefcount(p_frame.f_locals[obj]) == 2:
-        del p_frame.f_locals[obj]
-        if device == 'cuda':
-            torch.cuda.empty_cache()
-        elif device == 'mps':
-            torch.mps.empty_cache()
-        return True
-    return False
+    if device == "cuda":
+        torch.cuda.empty_cache()
+    elif device == "mps":
+        torch.mps.empty_cache()
