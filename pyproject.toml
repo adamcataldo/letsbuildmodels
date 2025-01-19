@@ -22,6 +22,7 @@ jupyterlab-rise = "^0.43.1"
 kaggle = "^1.6.17"
 kagglehub = "^0.3.6"
 pyvis = "^0.3.2"
+jupyterlab = "^4.3.4"
 
 [build-system]
 requires = ["poetry-core"]
