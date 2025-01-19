@@ -18,6 +18,10 @@ keras = "^3.7.0"
 requests = "^2.32.3"
 numpy = "^2.2.1"
 torcheval = "^0.0.7"
+jupyterlab-rise = "^0.43.1"
+kaggle = "^1.6.17"
+kagglehub = "^0.3.6"
+pyvis = "^0.3.2"
 
 [build-system]
 requires = ["poetry-core"]
