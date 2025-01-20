@@ -1,4 +1,5 @@
 import numpy as np
+import torch
 
 # A method to train a PyTorch model.
 def train(model, dataloader, optimizer, loss_fn, epochs):
@@ -23,3 +24,16 @@ def train(model, dataloader, optimizer, loss_fn, epochs):
             )
         loss_per_epoch.append(total_loss / count)
     return np.array(loss_per_epoch)
+
+# A method to evaluate a PyTorch model on test data
+def test(model, dataloader, loss_fn):
+    model.eval()
+    total_loss = 0
+    count = 0
+    with torch.no_grad():
+        for inputs, targets in dataloader:
+            outputs = model(inputs)
+            loss = loss_fn(outputs, targets)
+            total_loss += loss.item()
+            count += inputs.size()[0]
+    return total_loss / count

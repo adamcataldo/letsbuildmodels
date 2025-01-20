@@ -4,7 +4,7 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from letsbuildmodels.workflow import train
+from letsbuildmodels.workflow import train, test
 
 class TestTrainFunction(unittest.TestCase):
     def setUp(self):
@@ -23,6 +23,13 @@ class TestTrainFunction(unittest.TestCase):
 
         expected_shape = (2,)
         np.testing.assert_equal(loss_per_epoch.shape, expected_shape)
+
+    def test_test_function(self):
+        self.model.return_value = torch.tensor([1.0])
+        loss = test(self.model, self.dataloader, self.loss_fn)
+
+        self.assertIsInstance(loss, float)
+        self.assertTrue(loss >= 0)
 
 if __name__ == '__main__':
     unittest.main()
