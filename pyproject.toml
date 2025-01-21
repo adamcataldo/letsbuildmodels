@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "letsbuildmodels"
 version = "0.1.0"
-description = "Helper module for letsbuilmodels"
+description = "Module for ML examples"
 authors = ["Adam Cataldo"]
 license = "Apache License Version 2.0"
 readme = "README.md"
