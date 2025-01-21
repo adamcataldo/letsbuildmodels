@@ -4,7 +4,7 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from letsbuildmodels.workflow import train, test
+from lbm.workflow import train, test
 
 class TestTrainFunction(unittest.TestCase):
     def setUp(self):

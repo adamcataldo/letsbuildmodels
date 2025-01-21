@@ -1,6 +1,6 @@
 import unittest
 import torch
-from letsbuildmodels.datasets.housing_prices import HousingPrices, get_housing_prices
+from lbm.datasets.housing_prices import HousingPrices, Preprocessor
 
 class TestHousingPrices(unittest.TestCase):
     def setUp(self):
@@ -25,8 +25,10 @@ class TestHousingPrices(unittest.TestCase):
         self.assertIsInstance(means, torch.Tensor)
         self.assertIsInstance(stds, torch.Tensor)
 
-    def test_get_housing_prices(self):
-        (train_loader, val_loader, test_loader), (means, stds) = get_housing_prices(include_ocean_proximity=True)
+    def test_preprocessor(self):
+        preprocessor = Preprocessor(include_ocean_proximity=True)
+        train_loader, val_loader, test_loader = preprocessor.get_loaders()
+        means, stds = preprocessor.get_z_score()
         total_samples = len(train_loader.dataset) + len(val_loader.dataset) + len(test_loader.dataset)
         self.assertEqual(total_samples, len(self.dataset))
         self.assertIsInstance(means, torch.Tensor)

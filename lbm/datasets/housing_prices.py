@@ -34,24 +34,32 @@ class HousingPrices(Dataset):
         # Return single sample with correct shape
         return self.features[idx], self.target[idx]
 
-def get_housing_prices(
-        include_ocean_proximity=False,
-        batch_size=32,
-        train_pct=0.8,
-        val_pct=0.1):
-    # Initialize dataset
-    dataset = HousingPrices(include_ocean_proximity)
+class Preprocessor:
+    def __init__(self,
+                 include_ocean_proximity=False,
+                 batch_size=32,
+                 train_pct=0.8,
+                 val_pct=0.1
+                 ):
+        # Initialize dataset
+        dataset = HousingPrices(include_ocean_proximity)
 
-    # Split into training and testing sets
-    n = len(dataset)
-    train_size = int(train_pct * n)
-    val_size = int(val_pct * n)
-    test_size = n - train_size - val_size
-    train, val, test = random_split(dataset, [train_size, val_size, test_size])
+        # Split into training and testing sets
+        n = len(dataset)
+        train_size = int(train_pct * n)
+        val_size = int(val_pct * n)
+        test_size = n - train_size - val_size
+        train, val, test = random_split(dataset, [train_size, val_size, test_size])
 
-    # Create data loaders
-    train_loader = DataLoader(train, batch_size=batch_size, shuffle=True)
-    val_loader = DataLoader(val, batch_size=batch_size)
-    test_loader = DataLoader(test, batch_size=batch_size)
+        # Create data loaders
+        self.train_loader = DataLoader(train, batch_size=batch_size, shuffle=True)
+        self.val_loader = DataLoader(val, batch_size=batch_size)
+        self.test_loader = DataLoader(test, batch_size=batch_size)
+
+        self.means, self.stds = dataset.get_z_score()
+
+    def get_loaders(self):
+        return self.train_loader, self.val_loader, self.test_loader
     
-    return (train_loader, val_loader, test_loader), dataset.get_z_score()
+    def get_z_score(self):
+        return self.means, self.stds

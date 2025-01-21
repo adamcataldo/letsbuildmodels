@@ -1,6 +1,6 @@
 import unittest
 import torch
-from letsbuildmodels.models.simple_linear import SimpleLinear
+from lbm.models import SimpleLinear
 
 class TestSimpleLinear(unittest.TestCase):
     def setUp(self):

@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import patch
 
-from letsbuildmodels.devices import *
+from lbm.devices import *
 
 class TestGetDevice(unittest.TestCase):
     @patch("torch.cuda.is_available", return_value=True)

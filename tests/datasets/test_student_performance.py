@@ -1,5 +1,5 @@
 import unittest
-from letsbuildmodels.datasets.student_performance import get_student_data
+from lbm.datasets.student_performance import get_student_data
 
 class TestStudentPerformance(unittest.TestCase):
     def test_get_student_data_default(self):

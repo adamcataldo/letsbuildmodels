@@ -1,6 +1,6 @@
 import torch
 import unittest
-from letsbuildmodels.models.normalizer import Normalizer
+from lbm.models import Normalizer
 
 class TestNormalizer(unittest.TestCase):
     def setUp(self):
