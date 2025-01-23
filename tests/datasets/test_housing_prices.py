@@ -24,6 +24,8 @@ class TestHousingPrices(unittest.TestCase):
         self.assertEqual(stds.shape[0], self.dataset.features.shape[1])
         self.assertIsInstance(means, torch.Tensor)
         self.assertIsInstance(stds, torch.Tensor)
+        self.assertFalse(torch.isnan(means).any())
+        self.assertFalse(torch.isnan(stds).any())
 
     def test_preprocessor(self):
         preprocessor = Preprocessor(include_ocean_proximity=True)

@@ -17,6 +17,9 @@ class HousingPrices(Dataset):
             ocean_proximity = pd.get_dummies(features['ocean_proximity'])
             features = pd.concat([features, ocean_proximity], axis=1)
         features = features.drop('ocean_proximity', axis=1)
+        self.feature_names = features.columns
+        # Drop any rows in features with NaN values
+        features = features.dropna()
         features = features.values.astype(float)
         target = df['median_house_value'].values
         self.features = torch.tensor(features, dtype=torch.float32)
@@ -26,6 +29,9 @@ class HousingPrices(Dataset):
         means = self.features.mean(dim=0)
         stds = self.features.std(dim=0)
         return means, stds
+    
+    def get_feature_names(self):
+        return self.feature_names
     
     def __len__(self):
         return len(self.features)  # Number of samples
@@ -57,9 +63,14 @@ class Preprocessor:
         self.test_loader = DataLoader(test, batch_size=batch_size)
 
         self.means, self.stds = dataset.get_z_score()
+        self.feature_names = dataset.get_feature_names()
 
     def get_loaders(self):
         return self.train_loader, self.val_loader, self.test_loader
     
     def get_z_score(self):
         return self.means, self.stds
+    
+    def get_feature_names(self):
+        return self.feature_names
+

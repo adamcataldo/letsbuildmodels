@@ -1,4 +1,4 @@
-from lbm.models import Normalizer
+from lbm.models.normalizer import Normalizer
 from torch import nn
 
 class MultiInLinear(nn.Module):
@@ -10,5 +10,6 @@ class MultiInLinear(nn.Module):
 
     def forward(self, x):
         normalized = self.normalizer(x)
-        return self.linear(normalized)
+        y = self.linear(normalized)
+        return y
         
