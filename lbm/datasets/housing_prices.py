@@ -18,7 +18,6 @@ class HousingPrices(Dataset):
             features = pd.concat([features, ocean_proximity], axis=1)
         features = features.drop('ocean_proximity', axis=1)
         self.feature_names = features.columns
-        # Drop any rows in features with NaN values
         features = features.dropna()
         features = features.values.astype(float)
         target = df['median_house_value'].values

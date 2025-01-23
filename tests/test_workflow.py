@@ -4,7 +4,7 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from lbm.workflow import train, test
+from lbm.workflow import train, test, train_and_validate
 
 class TestTrainFunction(unittest.TestCase):
     def setUp(self):
@@ -30,6 +30,16 @@ class TestTrainFunction(unittest.TestCase):
 
         self.assertIsInstance(loss, float)
         self.assertTrue(loss >= 0)
+
+    def test_train_and_validate(self):
+        self.model.return_value = torch.tensor([1.0])
+        train_loss_per_epoch, val_loss_per_epoch = train_and_validate(
+            self.model, self.dataloader, self.dataloader, self.optimizer, self.loss_fn, self.epochs
+        )
+
+        expected_shape = (2,)
+        np.testing.assert_equal(train_loss_per_epoch.shape, expected_shape)
+        np.testing.assert_equal(val_loss_per_epoch.shape, expected_shape)
 
 if __name__ == '__main__':
     unittest.main()
