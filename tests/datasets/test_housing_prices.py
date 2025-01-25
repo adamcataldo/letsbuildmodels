@@ -38,6 +38,14 @@ class TestHousingPrices(unittest.TestCase):
         self.assertEqual(means.shape[0], self.dataset.features.shape[1])
         self.assertEqual(stds.shape[0], self.dataset.features.shape[1])
 
+    def test_multicolumn_label(self):
+        label_cols = ['median_house_value', 'median_income']
+        processor = Preprocessor(include_ocean_proximity=True, label_cols=label_cols)
+        train_loader, _, _ = processor.get_loaders()
+        for X, Y in train_loader:
+            self.assertEqual(X.size(), torch.Size([32, 12]))
+            self.assertEqual(Y.size(), torch.Size([32, 2]))
+            break
 
     
 if __name__ == '__main__':

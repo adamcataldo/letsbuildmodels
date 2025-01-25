@@ -1,17 +1,22 @@
+from enum import Enum
+
 import kagglehub
 import pandas as pd
 import torch
 from torch.utils.data import Dataset, DataLoader, random_split
 
-
 class HousingPrices(Dataset):
-    def __init__(self, include_ocean_proximity=False):
+    def __init__(
+            self,
+            include_ocean_proximity=False,
+            label_cols=['median_house_value']
+            ):
         path = kagglehub.dataset_download("camnugent/california-housing-prices")
         csv_file = f"{path}/housing.csv"
         df = pd.read_csv(csv_file)
         
         # Convert data to PyTorch tensors
-        features = df.drop('median_house_value', axis=1)
+        features = df.drop(columns=label_cols)
         if include_ocean_proximity:
             # One-hot encode ocean_proximity
             ocean_proximity = pd.get_dummies(features['ocean_proximity'])
@@ -20,9 +25,9 @@ class HousingPrices(Dataset):
         self.feature_names = features.columns
         features = features.dropna()
         features = features.values.astype(float)
-        target = df['median_house_value'].values
+        target = df[label_cols].values.astype(float)
         self.features = torch.tensor(features, dtype=torch.float32)
-        self.target = torch.tensor(target, dtype=torch.float32).unsqueeze(1)  # Add dimension
+        self.target = torch.tensor(target, dtype=torch.float32)
 
     def get_z_score(self):
         means = self.features.mean(dim=0)
@@ -39,15 +44,32 @@ class HousingPrices(Dataset):
         # Return single sample with correct shape
         return self.features[idx], self.target[idx]
 
+class IncomeAndPrices(Dataset):
+    def __init__(self, original_dataset):
+        self.original_dataset = original_dataset
+
+    def __len__(self):
+        return len(self.original_dataset)
+
+    def __getitem__(self, idx):
+        data, label = self.original_dataset[idx]
+        new_data = torch.cat((data[:, :7], data[:, 8:]), dim=1)
+        new_label = torch.cat((data[:, 8:9], label), dim=1)
+        return label, data
+
 class Preprocessor:
     def __init__(self,
                  include_ocean_proximity=False,
                  batch_size=32,
                  train_pct=0.8,
-                 val_pct=0.1
+                 val_pct=0.1,
+                 label_cols=['median_house_value'],
                  ):
         # Initialize dataset
-        dataset = HousingPrices(include_ocean_proximity)
+        dataset = HousingPrices(
+            include_ocean_proximity=include_ocean_proximity,
+            label_cols=label_cols
+        )
 
         # Split into training and testing sets
         n = len(dataset)
