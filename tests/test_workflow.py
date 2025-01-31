@@ -1,10 +1,10 @@
 import unittest
-from unittest.mock import MagicMock
+from unittest.mock import Mock
 import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from lbm.workflow import train, test, train_and_validate
+from lbm.workflow import train, test, train_and_validate, avg_accuracy, from_onehot
 
 class TestTrainFunction(unittest.TestCase):
     def setUp(self):
@@ -40,6 +40,30 @@ class TestTrainFunction(unittest.TestCase):
         expected_shape = (2,)
         np.testing.assert_equal(train_loss_per_epoch.shape, expected_shape)
         np.testing.assert_equal(val_loss_per_epoch.shape, expected_shape)
+
+    def test_from_onehot(self):
+        targets = torch.tensor([[0.0, 1.0], [1.0, 0.0]])
+        labels = from_onehot(targets)
+
+        expected_labels = torch.tensor([1, 0])
+        np.testing.assert_equal(labels.numpy(), expected_labels.numpy())
+
+    def test_avg_accuracy(self):
+        dataloader = [
+            (torch.tensor([[0.1, 2.0], [3.0, 4.0]]), 
+             torch.tensor([[0.0, 1.0, 0.0], [0.0, 0.0, 1.0]])),
+            (torch.tensor([[3.0, 4.0], [3.0, 4.0]]), 
+             torch.tensor([[1.0, 0.0, 0.0], [1.0, 0.0, 0.0]])),
+        ]
+        mock_model = Mock()
+        mock_model.side_effect = [
+            torch.tensor([[0.1, 0.8, 0.1],
+                          [0.2, 0.1, 0.7]]),
+            torch.tensor([[0.2, 0.7, 0.1],
+                          [0.7, 0.2, 0.7]]),
+        ]
+        accuracy = avg_accuracy(mock_model, dataloader)
+        self.assertAlmostEqual(accuracy, 0.75)
 
 if __name__ == '__main__':
     unittest.main()

@@ -50,5 +50,14 @@ class TestPreprocessor(unittest.TestCase):
     def test_single_label_constructable(self):
         preprocessor = Preprocessor()
 
+    def test_label_names(self):
+        label_names = self.preprocessor.get_label_names()
+        self.assertEqual(len(label_names), 5)
+        self.assertIn('INLAND', label_names)
+        self.assertIn('NEAR BAY', label_names)
+        self.assertIn('NEAR OCEAN', label_names)
+        self.assertIn('ISLAND', label_names)
+        self.assertIn('NEAR OCEAN', label_names)
+
 if __name__ == '__main__':
     unittest.main()

@@ -1,5 +1,6 @@
 import numpy as np
 import torch
+from torcheval.metrics import MulticlassAccuracy
 
 # A method to train a PyTorch model.
 def train(model, dataloader, optimizer, loss_fn, epochs):
@@ -63,3 +64,17 @@ def train_and_validate(model, train_loader, val_loader, optimizer, loss_fn, epoc
         train_loss_per_epoch.append(total_loss / count)
         val_loss_per_epoch.append(test(model, val_loader, loss_fn))
     return np.array(train_loss_per_epoch), np.array(val_loss_per_epoch)
+
+# A method to convert one-hot encoded targets to class labels (as integers)
+def from_onehot(targets):
+    return torch.argmax(targets, dim=1)
+
+# A method to evaluate a multiclass accruacy on a PyTorch model on test data
+def avg_accuracy(model, dataloader):
+    model.eval()
+    accuracy = MulticlassAccuracy()
+    with torch.no_grad():
+        for inputs, targets in dataloader:
+            outputs = model(inputs)
+            accuracy.update(outputs, from_onehot(targets))
+    return accuracy.compute().item()

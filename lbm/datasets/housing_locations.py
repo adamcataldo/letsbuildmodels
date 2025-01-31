@@ -20,6 +20,7 @@ class HousingLocations(Dataset):
         if not include_all_labels:
             labels = labels[['NEAR OCEAN']]
         self.feature_names = features.columns
+        self.label_names = labels.columns
         features = features.values.astype(float)
         target = labels.values.astype(float)
         self.features = torch.tensor(features, dtype=torch.float32)
@@ -33,6 +34,9 @@ class HousingLocations(Dataset):
     def get_feature_names(self):
         return self.feature_names
     
+    def get_label_names(self):
+        return self.label_names
+
     def __len__(self):
         return len(self.features)  # Number of samples
     
@@ -77,6 +81,7 @@ class Preprocessor:
 
         self.means, self.stds = dataset.get_z_score()
         self.feature_names = dataset.get_feature_names()
+        self.label_names = dataset.get_label_names()
 
     def get_loaders(self):
         return self.train_loader, self.val_loader, self.test_loader
@@ -86,4 +91,7 @@ class Preprocessor:
     
     def get_feature_names(self):
         return self.feature_names
+    
+    def get_label_names(self):
+        return self.label_names
 
