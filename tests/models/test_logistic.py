@@ -17,5 +17,11 @@ class TestLogisticInit(unittest.TestCase):
         y = out.item()
         self.assertTrue(y >= 0 and y <= 1)
 
+    def test_batch_call(self):
+        model = Logistic(self.in_features, self.means, self.stds)
+        sample = torch.randn(32, self.in_features)
+        out = model(sample)
+        self.assertEqual(out.size(), torch.Size([32, 1]))
+
 if __name__ == '__main__':
     unittest.main()
