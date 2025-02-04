@@ -15,7 +15,7 @@ class HousingLocations(Dataset):
         csv_file = f"{path}/housing.csv"
         df = pd.read_csv(csv_file).dropna()
 
-        features = df[['latitude', 'longitude']]
+        features = df[['longitude', 'latitude']]
         labels = pd.get_dummies(df['ocean_proximity'])
         if not include_all_labels:
             labels = labels[['NEAR OCEAN']]

@@ -1,26 +1,46 @@
 import torch
 import unittest
-from lbm.models import MLPClassifier
+from lbm.models import NormedHiddenLayer, NormedSoftmaxLayer, DenseClassifier
 
-class TestMLPClassifier(unittest.TestCase):
+class TestNormedHiddenLayer(unittest.TestCase):
+    def setUp(self):
+        self.in_features = 10
+        self.out_features = 20
+        self.layer = NormedHiddenLayer(self.in_features, self.out_features)
+
+    def test_forward_shape(self):
+        x = torch.randn(5, self.in_features)
+        output = self.layer.forward(x)
+        self.assertEqual(output.shape, (5, self.out_features))
+
+class TestNormedSoftmaxLayer(unittest.TestCase):
+    def setUp(self):
+        self.in_features = 10
+        self.out_features = 3
+        self.layer = NormedSoftmaxLayer(self.in_features, self.out_features)
+
+    def test_forward_shape(self):
+        x = torch.randn(5, self.in_features)
+        output = self.layer.forward(x)
+        self.assertEqual(output.shape, (5, self.out_features))
+
+    def test_forward_softmax(self):
+        x = torch.randn(5, self.in_features)
+        output = self.layer.forward(x)
+        softmax_sum = torch.sum(output, dim=1)
+        self.assertTrue(torch.allclose(softmax_sum, torch.ones(5), atol=1e-6))
+
+class TestDenseClassifier(unittest.TestCase):
     def setUp(self):
         self.in_features = 10
         self.layers = [20, 10]
         self.classes = 3
-        self.means = torch.zeros(self.in_features)
-        self.stds = torch.ones(self.in_features)
-        self.model = MLPClassifier(self.in_features, self.layers, self.classes, self.means, self.stds)
+        self.model = DenseClassifier(self.in_features, self.layers, self.classes)
 
     def test_forward_shape(self):
         x = torch.randn(5, self.in_features)
         output = self.model.forward(x)
         self.assertEqual(output.shape, (5, self.classes))
-
-    def test_forward_normalization(self):
-        x = torch.randn(5, self.in_features)
-        normalized_x = self.model.normalizer(x)
-        output = self.model.forward(x)
-        self.assertTrue(torch.allclose(normalized_x, x, atol=1e-6))
 
     def test_forward_softmax(self):
         x = torch.randn(5, self.in_features)
