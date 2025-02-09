@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "letsbuildmodels"
+name = "lbm"
 version = "0.1.0"
 description = "Module for ML examples"
 authors = ["Adam Cataldo"]
@@ -8,21 +8,16 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.12"
+jupyter = "^1.1.1"
+kagglehub = "^0.3.7"
+matplotlib = "^3.10.0"
+nltk = "^3.9.1"
+numpy = "^2.2.1"
+pandas = "^2.2.3"
+requests = "^2.32.3"
+torcheval = "^0.0.7"
 torch = "^2.5.1"
 torchvision = "^0.20.1"
-pandas = "^2.2.3"
-nltk = "^3.9.1"
-jupyter = "^1.1.1"
-matplotlib = "^3.10.0"
-keras = "^3.7.0"
-requests = "^2.32.3"
-numpy = "^2.2.1"
-torcheval = "^0.0.7"
-jupyterlab-rise = "^0.43.1"
-kaggle = "^1.6.17"
-kagglehub = "^0.3.6"
-pyvis = "^0.3.2"
-jupyterlab = "^4.3.4"
 
 [build-system]
 requires = ["poetry-core"]
