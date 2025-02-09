@@ -20,7 +20,6 @@ class TestPreprocessor(unittest.TestCase):
         for image, label in chain(train_loader, val_loader, test_loader):
             self.assertEqual(image.size()[1:], torch.Size((3, 150, 150)))
             self.assertEqual(image.dtype, torch.float32)
-            self.assertEqual(label.size()[1:], torch.Size((6,)))
             self.assertEqual(label.dtype, torch.int64)
             self.assertEqual(image.size()[0], label.size()[0])
             if image.size()[0] < batch_size:
@@ -31,7 +30,7 @@ class TestPreprocessor(unittest.TestCase):
     def test_class_name(self):
         names = ['forest', 'buildings', 'glacier', 'street', 'mountain', 'sea']
         self.assertEqual(self.processor.class_names, names)
-        one_hot = torch.tensor([0, 0, 1, 0, 0, 0])
+        one_hot = torch.tensor(2)
         self.assertEqual(self.processor.class_name(one_hot), 'glacier')
 
 if __name__ == '__main__':
