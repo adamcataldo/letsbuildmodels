@@ -1,7 +1,7 @@
 from .linear import Linear
 from .logistic import Logistic
 from .mlp import DenseClassifier, NormedHiddenLayer, NormedSoftmaxLayer
-from .multi_in_linear import MultiInLinear
+from .multi_in_linear import MultiInLinear, MultiInLinearNormalized
 from .multinomial_logistic import MultinomialLogistic
 from .resnet import Resnet18
 from .normalizer import Normalizer
@@ -12,6 +12,7 @@ __all__ = [
     'Linear',
     'Logistic',
     'MultiInLinear',
+    'MultiInLinearNormalized',
     'MultinomialLogistic',
     'Normalizer',
     'NormedHiddenLayer',

@@ -1,4 +1,7 @@
 __all__ = [
+    'housing_locations',
     'housing_prices',
-    'student_performance'
+    'intel_images',
+    'noisy_sine',
+    'student_performance',
 ]
