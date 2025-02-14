@@ -1,11 +1,11 @@
 import unittest
-from lbm.datasets.voo import Prepocessor, Features
+from lbm.datasets.voo import Preprocessor, Features
 
 class TestPrepocessor(unittest.TestCase):
     def test_get_loaders(self):
         batch_size = 32
         lookback = 252
-        self.preprocessor = Prepocessor(lookback=lookback)
+        self.preprocessor = Preprocessor(lookback=lookback)
         train_loader, val_loader, test_loader = self.preprocessor.get_loaders(
             batch_size)
         for x, y in train_loader:
@@ -24,7 +24,7 @@ class TestPrepocessor(unittest.TestCase):
     def test_all_prices(self):
         batch_size = 32
         lookback = 252
-        self.preprocessor = Prepocessor(Features.ALL_PRICES, lookback=lookback)
+        self.preprocessor = Preprocessor(Features.ALL_PRICES, lookback=lookback)
         train_loader, _, _ = self.preprocessor.get_loaders(batch_size)
         for x, y in train_loader:
             self.assertEqual(x.size(), (lookback, batch_size, 5)) 
@@ -34,7 +34,7 @@ class TestPrepocessor(unittest.TestCase):
     def test_all_prices_with_actions(self):
         batch_size = 64
         lookback = 252
-        self.preprocessor = Prepocessor(Features.ALL_PRICES_WITH_ACTIONS,
+        self.preprocessor = Preprocessor(Features.ALL_PRICES_WITH_ACTIONS,
                                         lookback=lookback)
         train_loader, _, _ = self.preprocessor.get_loaders(batch_size)
         for x, y in train_loader:

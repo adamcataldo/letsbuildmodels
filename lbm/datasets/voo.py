@@ -63,7 +63,7 @@ def timeseries_collate_fn(batch):
 
     return xs, ys
 
-class Prepocessor():
+class Preprocessor():
     def __init__(self, features=Features.CLOSE_PRICES, lookback=256):
         self.dataset = VOO(features, lookback)
 
