@@ -13,8 +13,8 @@ class VOO(Dataset):
         if features == Features.ALL_PRICES_WITH_ACTIONS:
             d = yf.download('VOO', start='2010-09-09', auto_adjust=False, 
                             actions=True)
-            self.x = d[['Capital Gains',
-                        'Close',
+            self.x = d[['Close',
+                        'Capital Gains',
                         'Dividends',
                         'High',
                         'Low',
@@ -83,7 +83,7 @@ class Preprocessor():
         self.val_set   = Subset(self.dataset, range(val_start, val_end))
         self.test_set  = Subset(self.dataset, range(test_start, test_end))
 
-    def get_loaders(self, batch_size=64):
+    def get_loaders(self, batch_size=64, include_returns=False):
         train_loader = DataLoader(self.train_set, batch_size=batch_size,
                                  collate_fn=timeseries_collate_fn)
         val_loader   = DataLoader(self.val_set,   batch_size=batch_size,
