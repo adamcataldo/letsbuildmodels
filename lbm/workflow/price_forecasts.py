@@ -12,7 +12,7 @@ def directional_accuracy(model, dataloader,device='cpu'):
             inputs, targets = inputs.to(device), targets.to(device)
             outputs = model(inputs)
             accuracy.update(inputs, targets, outputs)
-    return accuracy.compute().item()
+    return accuracy.compute()
 
 def return_error(model, dataloader,device='cpu'):
     model.to(device)
@@ -23,4 +23,4 @@ def return_error(model, dataloader,device='cpu'):
             inputs, targets = inputs.to(device), targets.to(device)
             outputs = model(inputs)
             accuracy.update(inputs, targets, outputs)
-    return accuracy.compute().item()
+    return accuracy.compute()

@@ -1,6 +1,7 @@
 import torch
 import unittest
-from lbm.models import NormedHiddenLayer, NormedSoftmaxLayer, DenseClassifier
+from lbm.models import DenseClassifier, DenseRegression
+from lbm.models.mlp import NormedHiddenLayer, NormedSoftmaxLayer
 
 class TestNormedHiddenLayer(unittest.TestCase):
     def setUp(self):
@@ -47,6 +48,21 @@ class TestDenseClassifier(unittest.TestCase):
         output = self.model.forward(x)
         softmax_sum = torch.sum(output, dim=1)
         self.assertTrue(torch.allclose(softmax_sum, torch.ones(5), atol=1e-6))
+
+    def test_has_parameters(self):
+        self.assertTrue(len(list(self.model.parameters())) > 0)
+
+class TestDenseRegression(unittest.TestCase):
+    def setUp(self):
+        self.in_features = 10
+        self.layers = [20, 10]
+        self.classes = 3
+        self.model = DenseRegression(self.in_features, self.layers, self.classes)
+
+    def test_forward_shape(self):
+        x = torch.randn(5, self.in_features)
+        output = self.model.forward(x)
+        self.assertEqual(output.shape, (5, self.classes))
 
     def test_has_parameters(self):
         self.assertTrue(len(list(self.model.parameters())) > 0)

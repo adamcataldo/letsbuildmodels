@@ -9,16 +9,16 @@ class TestPrepocessor(unittest.TestCase):
         train_loader, val_loader, test_loader = self.preprocessor.get_loaders(
             batch_size)
         for x, y in train_loader:
-            self.assertEqual(x.size(), (lookback, batch_size, 1)) 
-            self.assertEqual(y.size(), (batch_size, 1))
+            self.assertEqual(x.size(), (batch_size, lookback, 1)) 
+            self.assertEqual(y.size(), (batch_size,))
             break
         for x, y in val_loader:
-            self.assertEqual(x.size(), (lookback, batch_size, 1)) 
-            self.assertEqual(y.size(), (batch_size, 1))
+            self.assertEqual(x.size(), (batch_size, lookback, 1)) 
+            self.assertEqual(y.size(), (batch_size,))
             break
         for x, y in test_loader:
-            self.assertEqual(x.size(), (lookback, batch_size, 1)) 
-            self.assertEqual(y.size(), (batch_size, 1))
+            self.assertEqual(x.size(), (batch_size, lookback, 1)) 
+            self.assertEqual(y.size(), (batch_size,))
             break
 
     def test_all_prices(self):
@@ -27,8 +27,8 @@ class TestPrepocessor(unittest.TestCase):
         self.preprocessor = Preprocessor(Features.ALL_PRICES, lookback=lookback)
         train_loader, _, _ = self.preprocessor.get_loaders(batch_size)
         for x, y in train_loader:
-            self.assertEqual(x.size(), (lookback, batch_size, 5)) 
-            self.assertEqual(y.size(), (batch_size, 1))
+            self.assertEqual(x.size(), (batch_size, lookback, 5)) 
+            self.assertEqual(y.size(), (batch_size,))
             break
         
     def test_all_prices_with_actions(self):
@@ -38,8 +38,8 @@ class TestPrepocessor(unittest.TestCase):
                                         lookback=lookback)
         train_loader, _, _ = self.preprocessor.get_loaders(batch_size)
         for x, y in train_loader:
-            self.assertEqual(x.size(), (lookback, batch_size, 8)) 
-            self.assertEqual(y.size(), (batch_size, 1))
+            self.assertEqual(x.size(), (batch_size, lookback, 8)) 
+            self.assertEqual(y.size(), (batch_size,))
             break
 
 

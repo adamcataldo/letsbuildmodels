@@ -41,27 +41,8 @@ class VOO(Dataset):
     
     def __getitem__(self, idx):
         x = self.x[idx:idx+self.lookback, :]
-        y = self.y[idx+self.lookback, :]
+        y = self.y[idx+self.lookback, 0]
         return x, y
-    
-def timeseries_collate_fn(batch):
-    """
-    Expects a list of (x, y) pairs, where:
-      - x is shape (lookback,n)
-      - y is (1,)
-    Returns:
-      - x of shape (lookback, batch_size, n)
-      - y of shape (batch_size, 1)
-    """
-    xs, ys = [], []
-    for (x, y) in batch:
-        xs.append(x)
-        ys.append(y)
-
-    xs = torch.stack(xs, dim=1)
-    ys = torch.stack(ys, dim=0)
-
-    return xs, ys
 
 class Preprocessor():
     def __init__(self, features=Features.CLOSE_PRICES, lookback=256):
@@ -84,10 +65,7 @@ class Preprocessor():
         self.test_set  = Subset(self.dataset, range(test_start, test_end))
 
     def get_loaders(self, batch_size=64, include_returns=False):
-        train_loader = DataLoader(self.train_set, batch_size=batch_size,
-                                 collate_fn=timeseries_collate_fn)
-        val_loader   = DataLoader(self.val_set,   batch_size=batch_size,
-                                 collate_fn=timeseries_collate_fn)
-        test_loader  = DataLoader(self.test_set,  batch_size=batch_size,
-                                 collate_fn=timeseries_collate_fn)
+        train_loader = DataLoader(self.train_set, batch_size=batch_size)
+        val_loader   = DataLoader(self.val_set,   batch_size=batch_size)
+        test_loader  = DataLoader(self.test_set,  batch_size=batch_size)
         return train_loader, val_loader, test_loader

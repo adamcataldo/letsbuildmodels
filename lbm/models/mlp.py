@@ -3,7 +3,7 @@ from torch import nn
 
 class NormedHiddenLayer(nn.Module):
     def __init__(self, in_features, out_features, dropout=0.5):
-        super(NormedHiddenLayer, self).__init__()
+        super().__init__()
         self.linear = nn.Linear(in_features, out_features)
         self.normalizer = nn.BatchNorm1d(out_features)
         self.dropuut = nn.Dropout(dropout)
@@ -18,7 +18,7 @@ class NormedHiddenLayer(nn.Module):
     
 class NormedSoftmaxLayer(nn.Module):
     def __init__(self, in_features, out_features):
-        super(NormedSoftmaxLayer, self).__init__()
+        super().__init__()
         self.linear = nn.Linear(in_features, out_features)
         self.normalizer = nn.BatchNorm1d(out_features)
         self.softmax = nn.Softmax(dim=1)
@@ -31,13 +31,29 @@ class NormedSoftmaxLayer(nn.Module):
 
 class DenseClassifier(nn.Module):
     def __init__(self, in_features, layers, classes, dropout=0.5):
-        super(DenseClassifier, self).__init__()
+        super().__init__()
         self.layers = nn.ModuleList()
         prev_in = in_features
         for layer in layers:
             self.layers.append(NormedHiddenLayer(prev_in, layer, dropout))
             prev_in = layer
         self.layers.append(NormedSoftmaxLayer(prev_in, classes))
+
+    def forward(self, x):
+        y = x
+        for layer in self.layers:
+            y = layer(y)
+        return y
+    
+class DenseRegression(nn.Module):
+    def __init__(self, in_features, layers, out_features, dropout=0.5):
+        super().__init__()
+        self.layers = nn.ModuleList()
+        prev_in = in_features
+        for layer in layers:
+            self.layers.append(NormedHiddenLayer(prev_in, layer, dropout))
+            prev_in = layer
+        self.layers.append(NormedHiddenLayer(prev_in, out_features))
 
     def forward(self, x):
         y = x
