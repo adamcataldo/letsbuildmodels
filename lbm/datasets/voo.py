@@ -53,7 +53,6 @@ class Returns(Dataset):
         d = yf.download('VOO', start='2010-09-09')
         self.x = d['Close'].values
         self.x = torch.tensor(self.x, dtype=torch.float32)
-        self.returns = self.x[1:] / self.x[:-1] - 1
         self.n_points = len(self.returns)
         self.lookback = lookback
         
@@ -61,8 +60,11 @@ class Returns(Dataset):
         return self.n_points - self.lookback
     
     def __getitem__(self, idx):
-        x = self.returns[idx:idx+self.lookback, :]
-        y = self.returns[idx+self.lookback, 0]
+        x = self.x[idx:idx+self.lookback, :]
+        i = idx+self.lookback
+        one = torch.ones((1,))
+        zero = torch.zeros((1,))
+        y =  one if self.x[i, 0] > self.x[i-1, 0] else zero
         return x, y
 
 
