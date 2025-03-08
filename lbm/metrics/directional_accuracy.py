@@ -11,11 +11,11 @@ class DirectionalAccuracy(Metric):
     @torch.inference_mode()
     def update(self, input_sequences, actual_outputs, predicted_outputs):
         # Assumes the value of interest is always the first in/out dimension.
-        # input_sequences: (seq_len, batch_size, input_dim)
-        # t_actuals: (batch_size, output_dim)
-        # t_predictions: (batch_size, output_dim)
+        # input_sequences: (batch_size, seq_length, input_dim)
+        # actual_outputs: (batch_size, output_dim)
+        # predicted_outputs: (batch_size, output_dim)
         self.final_inputs = torch.cat((self.final_inputs, 
-                                       input_sequences[-1, :, 0]))   
+                                       input_sequences[:, -1, 0]))   
         self.actual_outputs = torch.cat((self.actual_outputs, 
                                          actual_outputs[:, 0]))
         self.predicted_outputs = torch.cat((self.predicted_outputs, 

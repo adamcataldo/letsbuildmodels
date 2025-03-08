@@ -1,9 +1,11 @@
 import unittest
-from unittest.mock import Mock
+from unittest.mock import MagicMock, Mock
 import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
+from torch.utils.data import DataLoader, TensorDataset
+from lbm.metrics.directional_accuracy import DirectionalAccuracy
 from lbm.workflow import train, test, train_and_validate, avg_accuracy, from_onehot
 
 class TestTrainFunction(unittest.TestCase):
@@ -64,6 +66,25 @@ class TestTrainFunction(unittest.TestCase):
         ]
         accuracy = avg_accuracy(mock_model, dataloader)
         self.assertAlmostEqual(accuracy, 0.75)
+ 
+    def test_directional_accuracy_metric_calls(self):
+        inputs = torch.randn(4, 5, 1)  # shape: (batch_size=4, seq_length=5, input_dim=1)
+        targets = torch.randn(4, 1)    # shape: (batch_size=4, output_dim=1)
+        dataloader = DataLoader(TensorDataset(inputs, targets), batch_size=2)
+
+        class DummyModel(nn.Module):
+            def forward(self, x):
+                return x[:, -1, :]  # shape: (batch_size, 1)
+
+        model = DummyModel()
+        loss_fn = nn.MSELoss()
+
+        metric = DirectionalAccuracy()
+        _ = test(model, dataloader, loss_fn, metrics=[metric])
+
+        assert metric.final_inputs.numel() > 0, "Expected non-empty final_inputs."
+        assert metric.actual_outputs.numel() > 0, "Expected non-empty actual_outputs."
+        assert metric.predicted_outputs.numel() > 0, "Expected non-empty predicted_outputs."
 
 if __name__ == '__main__':
     unittest.main()

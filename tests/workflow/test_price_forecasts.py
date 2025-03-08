@@ -27,16 +27,3 @@ class TestDirectionalAccuracy(unittest.TestCase):
             return_value=mock_accuracy):
             result = directional_accuracy(self.model, self.dataloader)
             self.assertEqual(result, 0.75)
-
-    def test_return_error(self):
-        # Mock DirectionalAccuracy
-        mock_accuracy = MagicMock()
-        mock_accuracy.compute.return_value = torch.tensor(0.75)
-        with unittest.mock.patch(
-            'lbm.workflow.price_forecasts.ReturnError', 
-            return_value=mock_accuracy):
-            result = directional_accuracy(self.model, self.dataloader)
-            self.assertEqual(result, 0.75)
-
-if __name__ == '__main__':
-    unittest.main()

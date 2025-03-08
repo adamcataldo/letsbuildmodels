@@ -6,7 +6,7 @@ class TestDirectionalAccuracy(unittest.TestCase):
     def test_compute_all_correct(self):
         metric = DirectionalAccuracy()
         input_sequences = torch.tensor([[[0.0], [1.0], [2.0]], 
-                                        [[1.0], [2.0], [3.0]]])
+                                        [[1.0], [2.0], [3.0]]]).transpose(1, 0)
         actual_outputs = torch.tensor([[2.0], [3.0], [4.0]])
         predicted_outputs = torch.tensor([[2.5], [3.5], [4.5]])
         metric.update(input_sequences, actual_outputs, predicted_outputs)
@@ -16,7 +16,7 @@ class TestDirectionalAccuracy(unittest.TestCase):
     def test_compute_all_incorrect(self):
         metric = DirectionalAccuracy()
         input_sequences = torch.tensor([[[0.0], [1.0], [2.0]], 
-                                        [[1.0], [2.0], [3.0]]])
+                                        [[1.0], [2.0], [3.0]]]).transpose(1, 0)
         actual_outputs = torch.tensor([[2.0], [3.0], [4.0]])
         predicted_outputs = torch.tensor([[0.5], [1.5], [2.5]])
         metric.update(input_sequences, actual_outputs, predicted_outputs)
@@ -26,7 +26,7 @@ class TestDirectionalAccuracy(unittest.TestCase):
     def test_compute_mixed(self):
         metric = DirectionalAccuracy()
         input_sequences = torch.tensor([[[0.0], [1.0], [2.0]], 
-                                        [[1.0], [2.0], [3.0]]])
+                                        [[1.0], [2.0], [3.0]]]).transpose(1, 0)
         actual_outputs = torch.tensor([[2.0], [1.0], [4.0]])
         predicted_outputs = torch.tensor([[2.5], [1.5], [2.5]])
         metric.update(input_sequences, actual_outputs, predicted_outputs)

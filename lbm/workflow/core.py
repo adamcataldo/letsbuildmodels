@@ -29,7 +29,7 @@ def train(model, dataloader, optimizer, loss_fn, epochs, device='cpu'):
     return np.array(loss_per_epoch)
 
 # A method to evaluate a PyTorch model on test data
-def test(model, dataloader, loss_fn, device='cpu'):
+def test(model, dataloader, loss_fn, device='cpu', metrics=[]):
     model.to(device)
     model.eval()
     total_loss = 0
@@ -41,11 +41,13 @@ def test(model, dataloader, loss_fn, device='cpu'):
             loss = loss_fn(outputs, targets)
             total_loss += loss.item()
             count += inputs.size()[0]
+            for metric in metrics:
+                metric.update(inputs, targets, outputs)
     return total_loss / count
 
 # A method to train and validate a PyTorch model.
 def train_and_validate(model, train_loader, val_loader, optimizer, loss_fn, 
-                       epochs, device='cpu'):
+                       epochs, device='cpu', metrics=[]):
     steps = len(train_loader)
     train_loss_per_epoch = []
     val_loss_per_epoch = []
@@ -70,7 +72,7 @@ def train_and_validate(model, train_loader, val_loader, optimizer, loss_fn,
             )
         train_loss_per_epoch.append(total_loss / count)
         val_loss_per_epoch.append(test(model, val_loader, loss_fn, 
-                                       device=device))
+                                       device=device, metrics=metrics))
     return np.array(train_loss_per_epoch), np.array(val_loss_per_epoch)
 
 # A method to convert one-hot encoded targets to class labels (as integers)
