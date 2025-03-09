@@ -2,35 +2,11 @@ import numpy as np
 import torch
 from torcheval.metrics import MulticlassAccuracy
 
-# A method to train a PyTorch model.
-def train(model, dataloader, optimizer, loss_fn, epochs, device='cpu'):
-    steps = len(dataloader)
-    loss_per_epoch = []
-    model.to(device)
-    model.train()
-    for e in range(epochs):
-        total_loss = 0
-        count = 0
-        for i, (inputs, targets) in enumerate(dataloader):
-            inputs, targets = inputs.to(device), targets.to(device)
-            outputs = model(inputs)
-            loss = loss_fn(outputs, targets)
-            loss.backward()
-            optimizer.step()
-            optimizer.zero_grad()
-            l = loss.item()
-            total_loss += l
-            count += inputs.size()[0]
-            print(
-                f'Epoch {e+1}/{epochs}, step {i+1}/{steps}         ',
-                end='\r'
-            )
-        loss_per_epoch.append(total_loss / count)
-    return np.array(loss_per_epoch)
-
 # A method to evaluate a PyTorch model on test data
 def test(model, dataloader, loss_fn, device='cpu', metrics=[]):
     model.to(device)
+    for metric in metrics:
+        metric.to(device)
     model.eval()
     total_loss = 0
     count = 0
@@ -38,7 +14,10 @@ def test(model, dataloader, loss_fn, device='cpu', metrics=[]):
         for inputs, targets in dataloader:
             inputs, targets = inputs.to(device), targets.to(device)
             outputs = model(inputs)
-            loss = loss_fn(outputs, targets)
+            if hasattr(loss_fn, "requires_inputs") and loss_fn.requires_inputs:
+                loss = loss_fn(outputs, targets, inputs)
+            else:
+                loss = loss_fn(outputs, targets)
             total_loss += loss.item()
             count += inputs.size()[0]
             for metric in metrics:
@@ -59,7 +38,10 @@ def train_and_validate(model, train_loader, val_loader, optimizer, loss_fn,
         for i, (inputs, targets) in enumerate(train_loader):
             inputs, targets = inputs.to(device), targets.to(device)
             outputs = model(inputs)
-            loss = loss_fn(outputs, targets)
+            if hasattr(loss_fn, "requires_inputs") and loss_fn.requires_inputs:
+                loss = loss_fn(outputs, targets, inputs)
+            else:
+                loss = loss_fn(outputs, targets)
             loss.backward()
             optimizer.step()
             optimizer.zero_grad()

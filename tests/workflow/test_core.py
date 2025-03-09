@@ -6,7 +6,7 @@ import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader, TensorDataset
 from lbm.metrics.directional_accuracy import DirectionalAccuracy
-from lbm.workflow import train, test, train_and_validate, avg_accuracy, from_onehot
+from lbm.workflow import test, train_and_validate, avg_accuracy, from_onehot
 
 class TestTrainFunction(unittest.TestCase):
     def setUp(self):
@@ -18,13 +18,6 @@ class TestTrainFunction(unittest.TestCase):
         self.optimizer = optim.SGD(self.model.parameters(), lr=0.01)
         self.loss_fn = nn.MSELoss()
         self.epochs = 2
-
-    def test_train_function(self):
-        self.model.return_value = torch.tensor([1.0])
-        loss_per_epoch = train(self.model, self.dataloader, self.optimizer, self.loss_fn, self.epochs)
-
-        expected_shape = (2,)
-        np.testing.assert_equal(loss_per_epoch.shape, expected_shape)
 
     def test_test_function(self):
         self.model.return_value = torch.tensor([1.0])

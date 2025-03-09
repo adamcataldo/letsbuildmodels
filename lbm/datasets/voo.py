@@ -16,7 +16,7 @@ class ClosePrices(Dataset):
     
     def __getitem__(self, idx):
         x = self.x[idx:idx+self.lookback, :]
-        y = self.x[idx+self.lookback, 0]
+        y = self.x[idx+self.lookback, 0:1]
         return x, y
 
 class ClosePricesPreprocessor():
@@ -62,8 +62,8 @@ class Returns(Dataset):
     def __getitem__(self, idx):
         x = self.x[idx:idx+self.lookback, :]
         i = idx+self.lookback
-        one = torch.ones((1,))
-        zero = torch.zeros((1,))
+        one = torch.ones((1,1))
+        zero = torch.zeros((1,1))
         y =  one if self.x[i, 0] > self.x[i-1, 0] else zero
         return x, y
 

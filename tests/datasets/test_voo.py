@@ -10,15 +10,15 @@ class TestPrepocessor(unittest.TestCase):
             batch_size)
         for x, y in train_loader:
             self.assertEqual(x.size(), (batch_size, lookback, 1)) 
-            self.assertEqual(y.size(), (batch_size,))
+            self.assertEqual(y.size(), (batch_size, 1))
             break
         for x, y in val_loader:
             self.assertEqual(x.size(), (batch_size, lookback, 1)) 
-            self.assertEqual(y.size(), (batch_size,))
+            self.assertEqual(y.size(), (batch_size, 1))
             break
         for x, y in test_loader:
             self.assertEqual(x.size(), (batch_size, lookback, 1)) 
-            self.assertEqual(y.size(), (batch_size,))
+            self.assertEqual(y.size(), (batch_size, 1))
             break
 
 if __name__ == '__main__':
