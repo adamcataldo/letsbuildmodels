@@ -3,35 +3,29 @@ from torch.utils.data import Dataset, DataLoader, Subset
 
 class TimeSeriesDataset(Dataset):
     # df: pandas DataFrame
-    def __init__(self, df, lookback, lookahead, align_feat_tgt):
+    def __init__(self, df, lookback, lookahead, tgt_lookback=0):
         self.ts = torch.tensor(df.to_numpy(), dtype=torch.float32)
         self.n_points = self.ts.size()[0]
         self.window = lookback
-        self.horizon = lookahead
-        self.align_feat_tgt = align_feat_tgt
-        if self.align_feat_tgt and self.horizon > self.window:
-            raise ValueError('Horizon must be less than or equal to window')
+        self.lookahead = lookahead
+        self.tgt_lookback = tgt_lookback
 
     def __len__(self):
-        return self.n_points - self.window - self.horizon + 1
+        return self.n_points - self.window - self.lookahead + 1
     
     def __getitem__(self, idx):
         start_x = idx
         end_x = idx + self.window
-        if self.align_feat_tgt:
-            start_y = end_x - (self.window - self.horizon)
-        else:
-            start_y = end_x
-        end_y = end_x + self.horizon
+        start_y = end_x - self.tgt_lookback
+        end_y = end_x + self.lookahead
         x = self.ts[start_x:end_x, :]
         y = self.ts[start_y:end_y, :]
         return x, y
     
 
 class TimeSeriesPreprocessor:
-    def __init__(self, df, lookback, lookahead=1, align_feat_tgt=False):
-        self.dataset = TimeSeriesDataset(df, lookback, lookahead,
-                                         align_feat_tgt)
+    def __init__(self, df, lookback, lookahead=1, tgt_lookback=0):
+        self.dataset = TimeSeriesDataset(df, lookback, lookahead, tgt_lookback)
 
         # Split the dataset into 80/10/10, in order
         length = len(self.dataset)

@@ -2,7 +2,7 @@ from torcheval.metrics.metric import Metric
 import torch
 
 class DirectionalAccuracy(Metric):
-    def __init__(self, device = None) -> None:
+    def __init__(self, device = None):
         super().__init__(device=device)
         self._add_state("final_inputs", torch.tensor([], device=self.device)) 
         self._add_state("actual_outputs", torch.tensor([], device=self.device))
@@ -12,8 +12,14 @@ class DirectionalAccuracy(Metric):
     def update(self, input_sequences, actual_outputs, predicted_outputs):
         # Assumes the value of interest is always the first in/out dimension.
         # input_sequences: (batch_size, seq_length, input_dim)
-        # actual_outputs: (batch_size, output_dim)
-        # predicted_outputs: (batch_size, output_dim)
+        # actual_outputs: (batch_size, output_dim) or 
+        #                 (batch_size, seq_length, output_dim)
+        # predicted_outputs: (batch_size, output_dim) or
+        #                    (batch_size, seq_length, output_dim)
+        if len(actual_outputs.shape) == 3:
+            actual_outputs = actual_outputs[:, -1, :]
+        if len(predicted_outputs.shape) == 3:
+            predicted_outputs = predicted_outputs[:, -1, :]
         self.final_inputs = torch.cat((self.final_inputs, 
                                        input_sequences[:, -1, 0]))   
         self.actual_outputs = torch.cat((self.actual_outputs, 

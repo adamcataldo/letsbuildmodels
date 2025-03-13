@@ -33,6 +33,18 @@ class TestDirectionalAccuracy(unittest.TestCase):
         result = metric.compute()
         self.assertAlmostEqual(result, 2/3)
 
+    def test_sequence_outputs(self):
+        metric = DirectionalAccuracy()
+        input_sequences = torch.tensor([[[0.0], [1.0], [2.0]], 
+                                        [[1.0], [2.0], [3.0]]]).transpose(1, 0)
+        actual_outputs = torch.tensor([[[0.1], [0.1], [0.1]],
+                                       [[2.0], [1.0], [4.0]]]).transpose(1, 0)
+        pred_outputs = torch.tensor([[[5.0], [5.0], [5.0]],
+                                     [[2.5], [1.5], [2.5]]]).transpose(1, 0)
+        metric.update(input_sequences, actual_outputs, pred_outputs)
+        result = metric.compute()
+        self.assertAlmostEqual(result, 2/3)
+
 
 if __name__ == '__main__':
     unittest.main()
