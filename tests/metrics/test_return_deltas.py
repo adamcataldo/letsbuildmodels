@@ -32,6 +32,18 @@ class TestReturnDeltas(unittest.TestCase):
         expected_result = np.array([1.0, 0.5])
         np.testing.assert_almost_equal(result, expected_result)
 
+    def test_as_sequences(self):
+        input_sequences = torch.tensor([[[1.0], [2.0]], [[3.0], [4.0]]])
+        actual_outputs = torch.tensor([[[1.0], [1.0]],
+                                       [[5.0], [6.0]]]).transpose(1, 0)
+        predicted_outputs = torch.tensor([[[10.0], [10.0]],
+                                          [[7.0], [8.0]]]).transpose(1, 0)
+        self.metric.update(input_sequences, actual_outputs, predicted_outputs)
+        
+        result = self.metric.compute()
+        expected_result = np.array([1.0, 0.5])
+        np.testing.assert_almost_equal(result, expected_result)
+
     def test_merge_state(self):
         metric1 = ReturnDeltas()
         metric2 = ReturnDeltas()
