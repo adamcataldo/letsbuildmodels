@@ -26,11 +26,13 @@ def test(model, dataloader, loss_fn, device='cpu', metrics=[]):
 
 # A method to train and validate a PyTorch model.
 def train_and_validate(model, train_loader, val_loader, optimizer, loss_fn, 
-                       epochs, device='cpu', metrics=[]):
+                       epochs, device='cpu', metrics=[], patience=3):
     steps = len(train_loader)
     train_loss_per_epoch = []
     val_loss_per_epoch = []
     model.to(device)
+    best_loss = float('inf')
+    steps_since_best = 0
     for e in range(epochs):
         total_loss = 0
         count = 0
@@ -52,9 +54,18 @@ def train_and_validate(model, train_loader, val_loader, optimizer, loss_fn,
                 f'Epoch {e+1}/{epochs}, step {i+1}/{steps}         ',
                 end='\r'
             )
-        train_loss_per_epoch.append(total_loss / count)
-        val_loss_per_epoch.append(test(model, val_loader, loss_fn, 
-                                       device=device, metrics=metrics))
+        epoch_loss = total_loss / count
+        train_loss_per_epoch.append(epoch_loss)
+        val_loss =  test(model, val_loader, loss_fn, device=device, 
+                         metrics=metrics)
+        val_loss_per_epoch.append(val_loss)
+        if val_loss < best_loss:
+            best_loss = val_loss
+            steps_since_best = 0
+        else:
+            steps_since_best += 1
+        if steps_since_best >= patience:
+            break
     return np.array(train_loss_per_epoch), np.array(val_loss_per_epoch)
 
 # A method to convert one-hot encoded targets to class labels (as integers)

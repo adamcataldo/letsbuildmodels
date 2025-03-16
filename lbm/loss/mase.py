@@ -16,4 +16,4 @@ class MASELoss(torch.nn.Module):
         error = torch.abs(y_true - y_pred)
         consecutive_diff = torch.abs(x[:, 1:, :] - x[:, :-1, :])
         naive_scale = torch.sum(consecutive_diff)
-        return torch.mean(error / (naive_scale + self.eps), 0)
+        return torch.mean(error / (naive_scale + self.eps))

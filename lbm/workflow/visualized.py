@@ -6,10 +6,11 @@ import matplotlib.ticker as mtick
 
 
 def train_and_validate(model, train_loader, val_loader, optimizer, loss_fn, 
-                       epochs, device='cpu', metrics=[]):
-    t_loss, v_loss = core.train_and_validate(model, train_loader, val_loader, 
-                                             optimizer, loss_fn, epochs, 
-                                             device=device, metrics=metrics)
+                       epochs, device='cpu', metrics=[], patience=3):
+    tv = core.train_and_validate
+    t_loss, v_loss = tv(model, train_loader, val_loader, optimizer, loss_fn, 
+                        epochs, device=device, metrics=metrics, 
+                        patience=patience)
     plt.plot(np.arange(1, len(t_loss) + 1), t_loss, label='Training',
              color='blue')
     plt.plot(np.arange(1, len(v_loss) + 1), v_loss, label='Validation', 

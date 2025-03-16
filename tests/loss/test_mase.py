@@ -19,22 +19,6 @@ class TestMASELoss(unittest.TestCase):
 
         assert_close(loss, torch.zeros_like(loss))
 
-    def test_output_shape(self):
-        batch_size = 4
-        seq_length = 6
-        feature_dim = 2
-
-        y_true = torch.randn(batch_size, feature_dim)
-        y_pred = torch.randn(batch_size, feature_dim)
-        x = torch.randn(batch_size, seq_length, feature_dim)
-
-        criterion = MASELoss()
-        loss = criterion(y_pred, y_true, x)
-
-        assert loss.shape == (feature_dim,), (
-            f"Expected output shape ({feature_dim},), got {loss.shape}"
-        )
-
     def test_hand_computed_example(self):
         x = torch.tensor([[[1.0], [2.0], [4.0]]])  # shape (1,3,1)
         y_true = torch.tensor([[1.0]])            # shape (1,1)
@@ -43,7 +27,7 @@ class TestMASELoss(unittest.TestCase):
         criterion = MASELoss(eps=1e-12)
         loss = criterion(y_pred, y_true, x)
 
-        expected_mase = torch.tensor([1.0 / 3.0])  # shape (1,)
+        expected_mase = torch.tensor(1.0 / 3.0)  # shape (1,)
 
         assert_close(loss, expected_mase)
 
