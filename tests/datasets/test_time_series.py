@@ -77,3 +77,25 @@ class TestTimeSeriesPreprocessor(unittest.TestCase):
             self.assertEqual(x[0, 0, 0], torch.tensor(901))
             break
 
+    def test_last_element(self):
+        preprocessor = TimeSeriesPreprocessor(self.df, 3, 1, 2)
+        train_loader, val_loader, test_loader = preprocessor.get_loaders(2)
+        self.assertEqual(len(train_loader), 800 / 2)
+        self.assertEqual(len(val_loader), 100 / 2)
+        self.assertEqual(len(test_loader), 100 / 2)
+        for x, y in train_loader:
+            self.assertEqual(x.size(), torch.Size([2, 3, 2]))
+            self.assertEqual(y.size(), torch.Size([2, 3, 2]))
+            break
+        for x, y in val_loader:
+            self.assertEqual(x.size(), torch.Size([2, 3, 2]))
+            self.assertEqual(y.size(), torch.Size([2, 1, 2]))
+            self.assertEqual(x[0, 0, 0], torch.tensor(801))
+            break
+        for x, y in test_loader:
+            self.assertEqual(x.size(), torch.Size([2, 3, 2]))
+            self.assertEqual(y.size(), torch.Size([2, 1, 2]))
+            self.assertEqual(x[0, 0, 0], torch.tensor(901))
+            break
+
+

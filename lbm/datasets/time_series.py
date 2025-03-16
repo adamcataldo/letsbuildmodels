@@ -1,5 +1,6 @@
 import torch
 from torch.utils.data import Dataset, DataLoader, Subset
+from lbm.datasets.transformed_dataset import TransformedDataset
 
 class TimeSeriesDataset(Dataset):
     # df: pandas DataFrame
@@ -22,6 +23,8 @@ class TimeSeriesDataset(Dataset):
         y = self.ts[start_y:end_y, :]
         return x, y
     
+def last_element(x):
+    return x[-1:, :]
 
 class TimeSeriesPreprocessor:
     def __init__(self, df, lookback, lookahead=1, tgt_lookback=0):
@@ -39,8 +42,14 @@ class TimeSeriesPreprocessor:
         
         # Subset objects for train/val/test
         self.train_set = Subset(self.dataset, range(train_start, train_end))
-        self.val_set   = Subset(self.dataset, range(val_start, val_end))
-        self.test_set  = Subset(self.dataset, range(test_start, test_end))
+        self.val_set = TransformedDataset(
+            Subset(self.dataset, range(val_start, val_end)),
+            y_transform=last_element
+        )
+        self.test_set = TransformedDataset(
+            Subset(self.dataset, range(test_start, test_end)),
+            y_transform=last_element
+        )
 
     def get_loaders(self, batch_size=64):
         train_loader = DataLoader(self.train_set, 
