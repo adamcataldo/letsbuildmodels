@@ -1,7 +1,6 @@
 # letsbuildmodels
 
-A helper repo for building AI models in PyTorch. To install the dependencies
-locally, run
+A demo repo for AI models. To install the dependencies locally, run
 
 ```
 poetry install

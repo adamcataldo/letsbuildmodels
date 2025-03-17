@@ -18,6 +18,7 @@ requests = "^2.32.3"
 torcheval = "^0.0.7"
 torch = "^2.5.1"
 torchvision = "^0.20.1"
+yfinance = "^0.2.52"
 
 [build-system]
 requires = ["poetry-core"]
